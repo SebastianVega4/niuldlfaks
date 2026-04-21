@@ -1,0 +1,183 @@
+<div class="container" style="max-width: 1400px; padding: 1rem;">
+  <div *ngIf="match() as m; else loading" class="animate-fade-in">
+    
+    <!-- Top Header -->
+    <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+      <!-- Team A Name -->
+      <h2 [class.title-glow]="serveState() === 'A'" style="margin: 0; font-size: 2rem; color: #3b82f6; width: 30%;">
+        {{ teamA()?.name || 'Equipo A' }}
+      </h2>
+      
+      <!-- Central Score & Info -->
+      <div class="text-center" style="width: 40%;">
+        <div *ngIf="m.scheduled_at" style="font-size: 0.9rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: bold;">
+          📅 {{ m.scheduled_at | date:'short' }}
+        </div>
+        <div style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px;">
+          Set {{ setsA() + setsB() + 1 }}
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 2rem;">
+          <div style="font-size: 5rem; font-weight: 800; line-height: 1; text-shadow: var(--neon-glow);">
+            {{ scoreA() }}
+          </div>
+          <div style="font-size: 2rem; color: var(--text-secondary);">:</div>
+          <div style="font-size: 5rem; font-weight: 800; line-height: 1; text-shadow: 0 0 10px rgba(244, 63, 94, 0.5), 0 0 20px rgba(244, 63, 94, 0.3);">
+            {{ scoreB() }}
+          </div>
+        </div>
+        <div style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem; font-size: 1.5rem; font-weight: 600;">
+          <span style="color: #3b82f6;">Sets: {{ setsA() }}</span>
+          <span>-</span>
+          <span style="color: #f43f5e;">Sets: {{ setsB() }}</span>
+        </div>
+      </div>
+
+      <!-- Team B Name -->
+      <h2 [class.title-glow]="serveState() === 'B'" style="margin: 0; font-size: 2rem; color: #f43f5e; width: 30%; text-align: right;">
+        {{ teamB()?.name || 'Equipo B' }}
+      </h2>
+    </div>
+
+    <!-- Edit/Settings Panel -->
+    <div class="glass-panel" style="padding: 1rem; margin-bottom: 2rem; text-align: right;">
+      <button class="btn btn-secondary" (click)="editMode.set(!editMode())">
+        ⚙️ {{ editMode() ? 'Cerrar Edición' : 'Editar Información' }}
+      </button>
+
+      <div *ngIf="editMode()" class="animate-fade-in" style="margin-top: 1.5rem; text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+         <div>
+            <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Nombre Equipo A</label>
+            <input type="text" [(ngModel)]="editNameA" class="input-field" style="width: 100%; padding: 0.5rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: white;">
+         </div>
+         <div>
+            <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Nombre Equipo B</label>
+            <input type="text" [(ngModel)]="editNameB" class="input-field" style="width: 100%; padding: 0.5rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: white;">
+         </div>
+         <div style="grid-column: span 2;">
+            <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Fecha y Hora del Partido</label>
+            <input type="datetime-local" [(ngModel)]="editDate" class="input-field" style="width: 100%; padding: 0.5rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: white;">
+         </div>
+         <div style="grid-column: span 2; text-align: center;">
+            <button class="btn btn-primary" (click)="saveSettings()">Guardar Cambios</button>
+         </div>
+      </div>
+    </div>
+
+    <!-- Match Controls -->
+    <div class="glass-panel flex items-center justify-between" style="padding: 1rem 2rem; margin-bottom: 2rem;">
+      <div style="font-size: 2rem; font-family: monospace; font-weight: bold; color: #fbbf24;">
+        ⏱️ {{ formattedTime }}
+      </div>
+      
+      <div class="flex gap-4">
+         <button class="btn btn-secondary" (click)="removePoint('A')" [disabled]="status() !== 'live'" style="font-size: 1.2rem;">-1 🔵</button>
+         <button class="btn btn-primary animate-pulse-glow" (click)="addPoint('A')" [disabled]="status() !== 'live'" style="font-size: 1.2rem;">+1 🔵</button>
+         
+         <div style="width: 2px; background: var(--border-color); margin: 0 1rem;"></div>
+
+         <button *ngIf="status() !== 'live' && status() !== 'finished'" class="btn btn-primary" style="background-color: #10b981; font-size: 1.2rem;" (click)="startTimer()">
+            ▶ Iniciar
+         </button>
+         <button *ngIf="status() === 'live'" class="btn btn-secondary" style="color: #fbbf24; border-color: #fbbf24; font-size: 1.2rem;" (click)="pauseTimer()">
+            ⏸ Pausa
+         </button>
+
+         <div style="width: 2px; background: var(--border-color); margin: 0 1rem;"></div>
+
+         <button class="btn btn-danger animate-pulse-glow" (click)="addPoint('B')" [disabled]="status() !== 'live'" style="font-size: 1.2rem;">+1 🔴</button>
+         <button class="btn btn-secondary" (click)="removePoint('B')" [disabled]="status() !== 'live'" style="font-size: 1.2rem;">-1 🔴</button>
+      </div>
+    </div>
+
+    <!-- Rotation Management (Hidden when set is live or has points) -->
+    <div *ngIf="isRotationEditable()" class="glass-panel animate-fade-in" style="padding: 1.5rem; margin-bottom: 2rem;">
+      <h3 class="title-glow" style="font-size: 1.5rem; margin-bottom: 1rem;">
+        Gestión de Rotación ({{ gameMode() }}x{{ gameMode() }})
+      </h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Team A Rotations -->
+        <div style="border-right: 1px solid var(--border-color); padding-right: 1rem;">
+          <h4 style="color: #3b82f6;">{{ teamA()?.name }}</h4>
+          <div *ngFor="let pos of playersA(); let i = index" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="width: 100px; font-size: 0.9rem; color: var(--text-secondary);">
+              Posición {{ i + 1 }}: {{ i === 0 ? '(SAQUE)' : '' }}
+            </span>
+            <select [ngModel]="playersA()[i]" 
+                    (ngModelChange)="updatePlayerPosition('A', i, $event)" 
+                    style="flex: 1; padding: 0.4rem; background: var(--bg-primary); color: white; border: 1px solid var(--border-color); border-radius: 4px;">
+              <option value="">-- Seleccionar Jugador --</option>
+              <option *ngFor="let p of getAvailableForPos('A', i)" [value]="p.name">{{ p.name }}</option>
+            </select>
+          </div>
+        </div>
+        <!-- Team B Rotations -->
+        <div style="padding-left: 1rem;">
+          <h4 style="color: #f43f5e;">{{ teamB()?.name }}</h4>
+          <div *ngFor="let pos of playersB(); let i = index" style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span style="width: 100px; font-size: 0.9rem; color: var(--text-secondary);">
+              Posición {{ i + 1 }}: {{ i === 0 ? '(SAQUE)' : '' }}
+            </span>
+            <select [ngModel]="playersB()[i]" 
+                    (ngModelChange)="updatePlayerPosition('B', i, $event)"
+                    style="flex: 1; padding: 0.4rem; background: var(--bg-primary); color: white; border: 1px solid var(--border-color); border-radius: 4px;">
+              <option value="">-- Seleccionar Jugador --</option>
+              <option *ngFor="let p of getAvailableForPos('B', i)" [value]="p.name">{{ p.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Court SVG Component -->
+    <app-court 
+        [teamA]="playersA()" 
+        [teamB]="playersB()"
+        [mode]="gameMode()"
+        [sideSwapped]="sideSwapped()"
+        [isServeA]="serveState() === 'A'"
+        [isServeB]="serveState() === 'B'">
+    </app-court>
+
+    <!-- Professional Point History (Horizontal Set Cards) -->
+    <div class="glass-panel" style="margin-top: 3rem; padding: 1.5rem;">
+      <h3 class="title-glow" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Historial por Sets</h3>
+      
+      <div class="sets-horizontal-container">
+        <!-- Generar una tarjeta por cada set que tenga puntos registrados -->
+        <div *ngFor="let setNum of [1, 2, 3]" class="set-card" 
+             [style.display]="hasPointsInSet(setNum) ? 'block' : 'none'">
+          <div class="set-card-header">SET {{ setNum }}</div>
+          
+          <div class="broadcast-history mini">
+            <div class="history-header">
+               <div class="team-name team-a">A</div>
+               <div class="point-divider">VS</div>
+               <div class="team-name team-b">B</div>
+            </div>
+            <div class="history-scroll">
+               <ng-container *ngFor="let h of pointHistory()">
+                 <div *ngIf="h.set === setNum" class="history-row animate-fade-in">
+                    <div class="point-box team-a" [class.scored]="h.team === 'A'">
+                       {{ h.team === 'A' ? h.scoreA : '' }}
+                    </div>
+                    <div class="point-divider"></div>
+                    <div class="point-box team-b" [class.scored]="h.team === 'B'">
+                       {{ h.team === 'B' ? h.scoreB : '' }}
+                    </div>
+                 </div>
+               </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <ng-template #loading>
+    <div class="flex justify-center items-center" style="min-height: 60vh;">
+      <h2 class="title-glow animate-pulse-glow">Cargando Partido...</h2>
+    </div>
+  </ng-template>
+</div>

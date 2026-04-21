@@ -1,0 +1,256 @@
+<div class="container">
+  
+  <!-- Header Section -->
+  <header class="stats-header animate-fade-in">
+    <h2 class="title-glow" style="font-size: 3rem; margin-bottom: 0.5rem;">Torneo de AstroVolley</h2>
+    <p class="subtitle">Clasificación en tiempo real y fase final del campeonato</p>
+  </header>
+
+  <div *ngIf="loading()" class="text-center" style="padding: 5rem;">
+    <div class="animate-pulse-glow" style="font-size: 1.5rem; color: var(--accent-primary);">
+      Preparando tablero de posiciones...
+    </div>
+  </div>
+
+  <div *ngIf="!loading()" class="animate-fade-in">
+    
+    <!-- Groups Section -->
+    <div class="groups-container">
+      
+      <!-- Group A -->
+      <div class="group-card glass-panel group-a">
+        <div class="group-header">
+          <h3>GRUPO A</h3>
+          <span class="badge">Fase de Grupos</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Equipo</th>
+                <th>Sets</th>
+                <th>Pts</th>
+                <th>Diff</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let team of teamsA(); let i = index" [class.qualified]="i < 2">
+                <td><span class="pos-num">{{ i + 1 }}</span></td>
+                <td>
+                  <div class="team-info">
+                    <span class="team-name">{{ team.name }}</span>
+                  </div>
+                </td>
+                <td class="stat-val">{{ team.stats.sets_ganados }}</td>
+                <td class="stat-val">{{ team.stats.puntos_total }}</td>
+                <td>
+                  <span class="diff-badge" 
+                        [class.positive]="team.stats.diferencia > 0"
+                        [class.negative]="team.stats.diferencia < 0"
+                        [class.neutral]="team.stats.diferencia === 0">
+                    {{ team.stats.diferencia > 0 ? '+' : '' }}{{ team.stats.diferencia }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Group B -->
+      <div class="group-card glass-panel group-b">
+        <div class="group-header">
+          <h3>GRUPO B</h3>
+          <span class="badge">Fase de Grupos</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Equipo</th>
+                <th>Sets</th>
+                <th>Pts</th>
+                <th>Diff</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let team of teamsB(); let i = index" [class.qualified]="i < 2">
+                <td><span class="pos-num">{{ i + 1 }}</span></td>
+                <td>
+                  <div class="team-info">
+                    <span class="team-name">{{ team.name }}</span>
+                  </div>
+                </td>
+                <td class="stat-val">{{ team.stats.sets_ganados }}</td>
+                <td class="stat-val">{{ team.stats.puntos_total }}</td>
+                <td>
+                  <span class="diff-badge" 
+                        [class.positive]="team.stats.diferencia > 0"
+                        [class.negative]="team.stats.diferencia < 0"
+                        [class.neutral]="team.stats.diferencia === 0">
+                    {{ team.stats.diferencia > 0 ? '+' : '' }}{{ team.stats.diferencia }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Status and Admin Actions -->
+    <div class="phase-status glass-panel" [class.in-progress]="!groupsComplete()" [class.completed]="groupsComplete()">
+      <div class="status-icon">{{ groupsComplete() ? '✅' : '⏳' }}</div>
+      <div class="status-info">
+        <h4>{{ groupsComplete() ? 'Fase de Grupos Finalizada' : 'Fase de Grupos en Curso' }}</h4>
+        <p>{{ groupsComplete() ? 'Los clasificados están listos para las semifinales.' : 'Pendiente de resultados para definir clasificados.' }}</p>
+      </div>
+      
+      <div *ngIf="supabase.isAdmin() && groupsComplete() && showGenerateButton()" style="margin-left: auto;">
+        <button class="btn btn-primary animate-pulse-glow" (click)="generatePlayoffs()">
+          🚀 Generar Semifinales
+        </button>
+      </div>
+    </div>
+
+    <!-- Tournament Bracket Section -->
+    <section class="tournament-bracket-section glass-panel">
+      <div class="flex justify-between items-center mb-12">
+        <div>
+          <h3 class="title-glow" style="font-size: 2.2rem; margin: 0;">Fase Final</h3>
+          <p style="color: var(--text-secondary);">Camino al Campeonato</p>
+        </div>
+        <button *ngIf="supabase.isAdmin()" (click)="refreshTournament()" class="btn btn-secondary">
+          🔄 Sincronizar Datos
+        </button>
+      </div>
+
+      <div class="bracket-container">
+        
+        <!-- SVG Connectors -->
+        <svg class="connector-svg" preserveAspectRatio="none">
+          <!-- Connectors will be simulated with CSS or simple SVG paths if needed, 
+               but for this redesign we'll use a clean layout approach -->
+        </svg>
+
+        <!-- Semifinals Column -->
+        <div class="bracket-col">
+          
+          <!-- Semi 1 -->
+          <div class="bracket-match animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="match-label">
+              <span>Semifinal 1</span>
+              <span *ngIf="getSemifinal1()?.status === 'live'" style="color: #f43f5e; animation: pulse 1s infinite;">● EN VIVO</span>
+            </div>
+            <div class="match-teams">
+              <div class="team-line" [class.winner]="getWinner(getSemifinal1()!)?.id === getSemifinal1()?.team_a?.id">
+                <span class="t-name">{{ getTeamName(getSemifinal1()?.team_a) }}</span>
+                <span class="t-score" *ngIf="getSemifinal1()?.status === 'finished'">{{ getSemifinal1()?.score_sets?.[0] }}</span>
+              </div>
+              <div class="team-line" [class.winner]="getWinner(getSemifinal1()!)?.id === getSemifinal1()?.team_b?.id">
+                <span class="t-name">{{ getTeamName(getSemifinal1()?.team_b) }}</span>
+                <span class="t-score" *ngIf="getSemifinal1()?.status === 'finished'">{{ getSemifinal1()?.score_sets?.[1] }}</span>
+              </div>
+            </div>
+            <div class="match-footer" *ngIf="getSemifinal1()">
+              <a [routerLink]="['/live', getSemifinal1()?.id]" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 1rem; width: 100%;">
+                {{ supabase.isAdmin() ? 'Gestionar' : 'Ver Detalles' }}
+              </a>
+            </div>
+          </div>
+
+          <!-- Semi 2 -->
+          <div class="bracket-match animate-fade-in" style="animation-delay: 0.2s;">
+            <div class="match-label">
+              <span>Semifinal 2</span>
+              <span *ngIf="getSemifinal2()?.status === 'live'" style="color: #f43f5e; animation: pulse 1s infinite;">● EN VIVO</span>
+            </div>
+            <div class="match-teams">
+              <div class="team-line" [class.winner]="getWinner(getSemifinal2()!)?.id === getSemifinal2()?.team_a?.id">
+                <span class="t-name">{{ getTeamName(getSemifinal2()?.team_a) }}</span>
+                <span class="t-score" *ngIf="getSemifinal2()?.status === 'finished'">{{ getSemifinal2()?.score_sets?.[0] }}</span>
+              </div>
+              <div class="team-line" [class.winner]="getWinner(getSemifinal2()!)?.id === getSemifinal2()?.team_b?.id">
+                <span class="t-name">{{ getTeamName(getSemifinal2()?.team_b) }}</span>
+                <span class="t-score" *ngIf="getSemifinal2()?.status === 'finished'">{{ getSemifinal2()?.score_sets?.[1] }}</span>
+              </div>
+            </div>
+            <div class="match-footer" *ngIf="getSemifinal2()">
+              <a [routerLink]="['/live', getSemifinal2()?.id]" class="btn btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 1rem; width: 100%;">
+                {{ supabase.isAdmin() ? 'Gestionar' : 'Ver Detalles' }}
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Final Column -->
+        <div class="final-col animate-fade-in" style="animation-delay: 0.4s;">
+          <div class="trophy-wrap">🏆</div>
+          
+          <div class="bracket-match final-match" [class.finished]="getFinal()?.status === 'finished'">
+            <div class="match-label">
+              <span>GRAN FINAL</span>
+              <span *ngIf="getFinal()?.status === 'live'" style="color: #fbbf24; animation: pulse 1s infinite;">● FINAL EN VIVO</span>
+            </div>
+            <div class="match-teams">
+              <div class="team-line" [class.winner]="getWinner(getFinal()!)?.id === getFinal()?.team_a?.id">
+                <span class="t-name" style="font-size: 1.1rem;">{{ getTeamName(getFinal()?.team_a) }}</span>
+                <span class="t-score" *ngIf="getFinal()?.status === 'finished'">{{ getFinal()?.score_sets?.[0] }}</span>
+              </div>
+              <div class="team-line" [class.winner]="getWinner(getFinal()!)?.id === getFinal()?.team_b?.id">
+                <span class="t-name" style="font-size: 1.1rem;">{{ getTeamName(getFinal()?.team_b) }}</span>
+                <span class="t-score" *ngIf="getFinal()?.status === 'finished'">{{ getFinal()?.score_sets?.[1] }}</span>
+              </div>
+            </div>
+            <div class="match-footer" *ngIf="getFinal()">
+              <a [routerLink]="['/live', getFinal()?.id]" class="btn btn-primary" style="width: 100%; border-radius: 0;">
+                {{ getFinal()?.status === 'finished' ? 'Ver Resultado' : 'IR A LA FINAL' }}
+              </a>
+            </div>
+          </div>
+
+          <div *ngIf="getFinal()?.status === 'finished'" class="champion-reveal">
+            <div class="label">CAMPEÓN DEL TORNEO</div>
+            <div class="name">{{ getWinner(getFinal()!)?.name }}</div>
+          </div>
+        </div>
+
+        <!-- Group Matches Column (Summary) -->
+        <div class="bracket-col" style="gap: 2rem;">
+          <div>
+            <h4 style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase;">Últimos Partidos</h4>
+            <div class="mini-match-list">
+              <div *ngFor="let m of allMatches().slice(-5).reverse()" class="mini-match">
+                <div class="teams">
+                  <span [class.winner]="m.status === 'finished' && m.score_sets[0] > m.score_sets[1]">{{ m.team_a?.name }}</span>
+                  <span style="font-size: 0.6rem; opacity: 0.5;">vs</span>
+                  <span [class.winner]="m.status === 'finished' && m.score_sets[1] > m.score_sets[0]">{{ m.team_b?.name }}</span>
+                </div>
+                <div class="score-pill" *ngIf="m.status === 'finished'">{{ m.score_sets[0] }}-{{ m.score_sets[1] }}</div>
+                <div class="score-pill" *ngIf="m.status !== 'finished'" style="font-size: 0.6rem; color: #f59e0b;">{{ m.status }}</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="glass-panel" style="padding: 1.5rem; background: rgba(59, 130, 246, 0.05);">
+            <h5 style="color: var(--accent-primary); margin-bottom: 0.5rem;">Info del Torneo</h5>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6;">
+              Los dos mejores equipos de cada grupo avanzan a semifinales. Las semifinales se juegan cruzadas (1°A vs 2°B y 1°B vs 2°A).
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Legend/Footer -->
+    <footer style="margin-top: 4rem; padding: 2rem; border-top: 1px solid var(--border-color); opacity: 0.6;" class="text-center">
+      <p style="font-size: 0.8rem;">Actualizado automáticamente via Supabase Realtime</p>
+    </footer>
+
+  </div>
+</div>

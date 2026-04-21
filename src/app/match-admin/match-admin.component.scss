@@ -1,0 +1,99 @@
+.sets-horizontal-container {
+  display: flex;
+  flex-direction: column; // Los sets uno debajo de otro para tener ancho completo
+  gap: 2rem;
+  width: 100%;
+
+  .set-card {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+
+    .set-card-header {
+      font-weight: 800;
+      color: #fbbf24;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      
+      &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border-color);
+      }
+    }
+  }
+}
+
+.broadcast-history {
+  &.mini {
+    max-width: 100%;
+    
+    .history-header {
+      display: none; // No necesitamos cabecera repetitiva en horizontal
+    }
+
+    .history-scroll {
+      display: flex;
+      flex-direction: row; // ¡CAMBIO A HORIZONTAL!
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 1rem 0.5rem;
+      gap: 8px;
+      min-height: 100px;
+      justify-content: flex-start;
+
+      // Estilizar la barra de scroll para que se vea bien
+      &::-webkit-scrollbar { height: 6px; }
+      &::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+      &::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+    }
+
+    .history-row {
+      display: flex;
+      flex-direction: column; // El punto A arriba del punto B en la columna
+      min-width: 45px;
+      gap: 4px;
+      align-items: center;
+
+      .point-box {
+        width: 100%;
+        height: 35px;
+        font-size: 0.85rem;
+        border-radius: 4px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05);
+
+        &.scored {
+          background: rgba(255,255,255,0.1);
+        }
+        
+        &.team-a.scored {
+          border-left: 0;
+          border-top: 3px solid #3b82f6;
+          color: #3b82f6;
+          background: rgba(59, 130, 246, 0.1);
+        }
+
+        &.team-b.scored {
+          border-right: 0;
+          border-bottom: 3px solid #f43f5e;
+          color: #f43f5e;
+          background: rgba(244, 63, 94, 0.1);
+        }
+      }
+
+      .point-divider {
+        width: 100%;
+        height: 1px;
+        background: var(--border-color);
+        margin: 2px 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,93 @@
+<div class="container" style="max-width: 1400px; padding: 1rem;">
+  <div *ngIf="match() as m; else loading" class="animate-fade-in" style="margin-top: 2rem;">
+    
+    <!-- Top Header Broadcast Style -->
+    <div class="glass-panel text-center" style="padding: 2rem; margin-bottom: 2rem; border-top: 4px solid var(--accent-primary);">
+      <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 1rem;">
+        <span *ngIf="status() === 'live'" class="animate-pulse-glow" style="display: inline-block; background-color: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;">● EN VIVO</span>
+        <span *ngIf="status() === 'timeout'" style="display: inline-block; background-color: #f59e0b; color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: bold; font-size: 0.8rem; uppercase;">⏸ TIEMPO FUERA</span>
+        <span *ngIf="status() === 'finished'" style="display: inline-block; background-color: #10b981; color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: bold; font-size: 0.8rem; uppercase;">✅ FINALIZADO</span>
+        <span *ngIf="status() === 'scheduled'" style="display: inline-block; background-color: #64748b; color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: bold; font-size: 0.8rem;">PROGRAMADO</span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <!-- Team A -->
+        <div style="width: 33%; text-align: right;">
+           <h2 style="font-size: 3rem; margin: 0; color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.3);">{{ teamA()?.name }}</h2>
+           <div style="font-size: 1.2rem; color: var(--text-secondary);">Sets Ganados: {{ setsA() }}</div>
+        </div>
+
+        <!-- Center Score -->
+        <div style="width: 33%; display: flex; justify-content: center; align-items: center; gap: 2rem; margin: 0 2rem;">
+           <div class="score-box score-a">
+             {{ scoreA() }}
+           </div>
+           <div style="font-size: 2rem; color: var(--text-secondary); font-weight: bold;">-</div>
+           <div class="score-box score-b">
+             {{ scoreB() }}
+           </div>
+        </div>
+
+        <!-- Team B -->
+        <div style="width: 33%; text-align: left;">
+           <h2 style="font-size: 3rem; margin: 0; color: #f43f5e; text-shadow: 0 0 10px rgba(244,63,94,0.3);">{{ teamB()?.name }}</h2>
+           <div style="font-size: 1.2rem; color: var(--text-secondary);">Sets Ganados: {{ setsB() }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- The Court Graphic as Broadcast HUD -->
+    <div style="pointer-events: none;">
+       <app-court 
+            [teamA]="playersA()" 
+            [teamB]="playersB()"
+            [mode]="match()?.game_mode || 6"
+            [isServeA]="serveState() === 'A'"
+            [isServeB]="serveState() === 'B'"
+            [showInversionControl]="false">
+       </app-court>
+    </div>
+
+    <!-- Professional Point History (Horizontal Set Cards) -->
+    <div *ngIf="pointHistory().length > 0" class="glass-panel animate-fade-in" style="margin-top: 3rem; padding: 1.5rem;">
+      <h3 class="title-glow" style="font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">Marcador por Sets</h3>
+      
+      <div class="sets-horizontal-container">
+        <!-- Generar una tarjeta por cada set que tenga puntos registrados -->
+        <div *ngFor="let setNum of [1, 2, 3]" class="set-card" 
+             [style.display]="hasPointsInSet(setNum) ? 'block' : 'none'">
+          <div class="set-card-header">SET {{ setNum }}</div>
+          
+          <div class="broadcast-history mini">
+            <div class="history-header">
+               <div class="team-name team-a">A</div>
+               <div class="point-divider">VS</div>
+               <div class="team-name team-b">B</div>
+            </div>
+            <div class="history-scroll">
+               <ng-container *ngFor="let h of pointHistory()">
+                 <div *ngIf="h.set === setNum" class="history-row animate-fade-in">
+                    <div class="point-box team-a" [class.scored]="h.team === 'A'">
+                       {{ h.team === 'A' ? h.scoreA : '' }}
+                    </div>
+                    <div class="point-divider"></div>
+                    <div class="point-box team-b" [class.scored]="h.team === 'B'">
+                       {{ h.team === 'B' ? h.scoreB : '' }}
+                    </div>
+                 </div>
+               </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <ng-template #loading>
+    <div class="flex justify-center items-center" style="min-height: 60vh;">
+      <h2 class="title-glow animate-pulse-glow" style="font-size: 2rem;">Buscando Transmisión...</h2>
+    </div>
+  </ng-template>
+</div>

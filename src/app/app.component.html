@@ -1,0 +1,50 @@
+<nav class="glass-panel" style="margin: 1rem auto; max-width: 1200px; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-radius: 999px;">
+  <a routerLink="/" style="text-decoration: none; font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; display: flex; align-items: center; gap: 0.5rem;" class="title-glow">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12a14.5 14.5 0 0 0 20 0 14.5 14.5 0 0 0-20 0"/></svg>
+    TorneosVolley
+  </a>
+
+  <div class="flex gap-4 items-center">
+    <!-- Links Públicos -->
+    <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Inicio</a>
+    <a routerLink="/standings" routerLinkActive="active-link" class="nav-link">Posiciones</a>
+    <a routerLink="/teams" routerLinkActive="active-link" class="nav-link">Equipos</a>
+
+    <!-- Enlaces Exclusivos del Admin -->
+    <ng-container *ngIf="supabase.isAdmin()">
+       <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 0.5rem;"></div>
+       <a routerLink="/sorteo" routerLinkActive="active-link" class="nav-link" style="color: var(--accent-primary);">Panel Sorteo</a>
+       <button (click)="logout()" class="nav-link" style="background: transparent; border: none; cursor: pointer; color: #f43f5e;">Cerrar Sesión</button>
+    </ng-container>
+
+    <!-- Botón Login para Públicos -->
+    <ng-container *ngIf="!supabase.isAdmin()">
+       <a routerLink="/login" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.9rem;">Acceso Admin</a>
+    </ng-container>
+  </div>
+</nav>
+
+<style>
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background: var(--bg-secondary);
+}
+
+.active-link {
+  color: white !important;
+  background: var(--accent-primary) !important;
+}
+</style>
+
+<main>
+  <router-outlet></router-outlet>
+</main>
