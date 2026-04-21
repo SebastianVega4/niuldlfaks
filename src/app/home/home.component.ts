@@ -54,8 +54,10 @@ import { SupabaseService, Match } from '../core/services/supabase.service';
                   <!-- Date Display/Edit -->
                   <div *ngIf="m.status === 'scheduled'" style="text-align: right;">
                     <div *ngIf="editingMatchId() !== m.id; else editDate" style="display: flex; align-items: center; gap: 0.5rem;">
-                       <span style="font-size: 0.8rem; color: var(--text-secondary);">{{ m.scheduled_at | date:'short' }}</span>
-                       <button *ngIf="supabase.isAdmin()" (click)="startEditingDate(m)" class="btn btn-secondary" style="padding: 0.1rem 0.3rem; font-size: 0.7rem;">📅</button>
+                       <span style="font-size: 0.85rem; color: #fbbf24; font-weight: 700; background: rgba(251, 191, 36, 0.1); padding: 0.2rem 0.6rem; border-radius: 6px;">
+                         📅 {{ m.scheduled_at | date:'MMM d, h:mm a' }}
+                       </span>
+                       <button *ngIf="supabase.isAdmin()" (click)="startEditingDate(m)" class="btn btn-secondary" style="padding: 0.2rem 0.4rem; font-size: 0.75rem;">✏️</button>
                     </div>
                     <ng-template #editDate>
                        <div style="display: flex; gap: 0.3rem;">

@@ -25,9 +25,6 @@
       </ng-container>
 
       <!-- Botón Login para Públicos -->
-      <ng-container *ngIf="!supabase.isAdmin()">
-         <a routerLink="/login" (click)="closeMenu()" class="btn btn-primary login-btn">Acceso Admin</a>
-      </ng-container>
     </div>
   </div>
 </nav>
