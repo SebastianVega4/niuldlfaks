@@ -11,7 +11,7 @@ import { SupabaseService } from '../core/services/supabase.service';
     <div class="container flex justify-center items-center" style="min-height: 70vh;">
       <div class="glass-panel" style="width: 100%; max-width: 400px; padding: 2.5rem;">
         <h2 class="title-glow text-center" style="margin-bottom: 2rem; font-size: 2rem;">
-          {{ isSignUp() ? 'Crear Cuenta' : 'Acceso Administrador' }}
+          Acceso Administrador
         </h2>
         
         <form (ngSubmit)="onSubmit()" class="flex" style="flex-direction: column; gap: 1.5rem;">
@@ -28,12 +28,8 @@ import { SupabaseService } from '../core/services/supabase.service';
              {{ error() }}
           </div>
 
-          <div *ngIf="message()" style="color: #10b981; font-size: 0.9rem; text-align: center;">
-             {{ message() }}
-          </div>
-
           <button type="submit" class="btn btn-primary animate-pulse-glow" [disabled]="loading()" style="width: 100%; margin-top: 1rem; padding: 1rem; font-size: 1.1rem;">
-            {{ loading() ? 'Procesando...' : (isSignUp() ? 'Registrarse' : 'Entrar') }}
+            {{ loading() ? 'Procesando...' : 'Entrar' }}
           </button>
         </form>
       </div>
@@ -45,28 +41,13 @@ export class LoginComponent {
   email = '';
   password = '';
   loading = signal(false);
-  isSignUp = signal(false);
   error = signal('');
-  message = signal('');
-
-  toggleMode() {
-    this.isSignUp.update(v => !v);
-    this.error.set('');
-    this.message.set('');
-  }
 
   async onSubmit() {
     this.loading.set(true);
     this.error.set('');
-    this.message.set('');
     try {
-      if (this.isSignUp()) {
-        await this.supabase.signUp(this.email, this.password);
-        this.message.set('Registro exitoso. Revisa tu correo (si aplica) o intenta iniciar sesión.');
-        this.isSignUp.set(false);
-      } else {
-        await this.supabase.signIn(this.email, this.password);
-      }
+      await this.supabase.signIn(this.email, this.password);
     } catch (e: any) {
       this.error.set(e.message || 'Error en la operación');
     } finally {

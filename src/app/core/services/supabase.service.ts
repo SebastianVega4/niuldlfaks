@@ -82,12 +82,6 @@ export class SupabaseService {
     this.router.navigate(['/sorteo']);
   }
 
-  async signUp(email: string, pass: string) {
-    const { error } = await this.supabase.auth.signUp({ email, password: pass });
-    if (error) throw error;
-    // Notify user to check email or automatically sign in depending on config
-  }
-
   async signOut() {
     await this.supabase.auth.signOut();
     this.router.navigate(['/']);
