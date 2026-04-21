@@ -205,11 +205,24 @@ export class HomeComponent implements OnInit {
 
   startEditingDate(match: Match) {
     this.editingMatchId.set(match.id!);
-    this.newMatchDate = match.scheduled_at ? new Date(match.scheduled_at).toISOString().slice(0, 16) : '';
+    if (match.scheduled_at) {
+      const date = new Date(match.scheduled_at);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      this.newMatchDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+    } else {
+      this.newMatchDate = '';
+    }
   }
 
   async saveMatchDate(id: string) {
-    await this.supabase.updateMatchState(id, { scheduled_at: this.newMatchDate });
+    // Añadimos el offset de Colombia (-05:00) para que Supabase no asuma que es UTC+0
+    const dateWithOffset = this.newMatchDate ? `${this.newMatchDate}:00-05:00` : null;
+    
+    await this.supabase.updateMatchState(id, { scheduled_at: dateWithOffset as any });
     this.editingMatchId.set(null);
     this.fetchMatches();
   }
