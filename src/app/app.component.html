@@ -1,37 +1,88 @@
-<nav class="glass-panel" style="margin: 1rem auto; max-width: 1200px; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; border-radius: 999px;">
-  <a routerLink="/" style="text-decoration: none; font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; display: flex; align-items: center; gap: 0.5rem;" class="title-glow">
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12a14.5 14.5 0 0 0 20 0 14.5 14.5 0 0 0-20 0"/></svg>
-    TorneosVolley
-  </a>
+<nav class="glass-panel nav-container">
+  <div class="nav-content">
+    <a routerLink="/" (click)="closeMenu()" class="brand title-glow">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12a14.5 14.5 0 0 0 20 0 14.5 14.5 0 0 0-20 0"/></svg>
+      AstroVolley
+    </a>
 
-  <div class="flex gap-4 items-center">
-    <!-- Links Públicos -->
-    <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Inicio</a>
-    <a routerLink="/standings" routerLinkActive="active-link" class="nav-link">Posiciones</a>
-    <a routerLink="/teams" routerLinkActive="active-link" class="nav-link">Equipos</a>
+    <!-- Botón Hamburguesa -->
+    <button class="menu-toggle" (click)="toggleMenu()" aria-label="Menu">
+      <svg *ngIf="!isMenuOpen()" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      <svg *ngIf="isMenuOpen()" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
 
-    <!-- Enlaces Exclusivos del Admin -->
-    <ng-container *ngIf="supabase.isAdmin()">
-       <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 0.5rem;"></div>
-       <a routerLink="/sorteo" routerLinkActive="active-link" class="nav-link" style="color: var(--accent-primary);">Panel Sorteo</a>
-       <button (click)="logout()" class="nav-link" style="background: transparent; border: none; cursor: pointer; color: #f43f5e;">Cerrar Sesión</button>
-    </ng-container>
+    <!-- Enlaces de Navegación -->
+    <div class="nav-links" [class.open]="isMenuOpen()">
+      <a routerLink="/" (click)="closeMenu()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Inicio</a>
+      <a routerLink="/standings" (click)="closeMenu()" routerLinkActive="active-link" class="nav-link">Posiciones</a>
+      <a routerLink="/teams" (click)="closeMenu()" routerLinkActive="active-link" class="nav-link">Equipos</a>
 
-    <!-- Botón Login para Públicos -->
-    <ng-container *ngIf="!supabase.isAdmin()">
-       <a routerLink="/login" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.9rem;">Acceso Admin</a>
-    </ng-container>
+      <!-- Enlaces Exclusivos del Admin -->
+      <ng-container *ngIf="supabase.isAdmin()">
+         <div class="divider"></div>
+         <a routerLink="/sorteo" (click)="closeMenu()" routerLinkActive="active-link" class="nav-link admin-link">Panel Sorteo</a>
+         <button (click)="logout(); closeMenu()" class="nav-link logout-btn">Cerrar Sesión</button>
+      </ng-container>
+
+      <!-- Botón Login para Públicos -->
+      <ng-container *ngIf="!supabase.isAdmin()">
+         <a routerLink="/login" (click)="closeMenu()" class="btn btn-primary login-btn">Acceso Admin</a>
+      </ng-container>
+    </div>
   </div>
 </nav>
 
 <style>
+.nav-container {
+  margin: 1rem auto;
+  max-width: 1200px;
+  border-radius: 999px;
+  position: sticky;
+  top: 1rem;
+  z-index: 1000;
+}
+
+.nav-content {
+  padding: 0.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+}
+
+.menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
 .nav-link {
   color: var(--text-secondary);
   text-decoration: none;
   font-weight: 600;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   border-radius: 999px;
   transition: all 0.2s;
+  font-size: 0.95rem;
 }
 
 .nav-link:hover {
@@ -42,6 +93,84 @@
 .active-link {
   color: white !important;
   background: var(--accent-primary) !important;
+}
+
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border-color);
+  margin: 0 0.5rem;
+}
+
+.admin-link {
+  color: var(--accent-primary) !important;
+}
+
+.logout-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #f43f5e !important;
+}
+
+.login-btn {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  border-radius: 999px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-container {
+    margin: 0.5rem;
+    border-radius: 20px;
+    top: 0.5rem;
+  }
+
+  .nav-content {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    flex-direction: column;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .divider {
+    width: 80%;
+    height: 1px;
+    margin: 0.5rem 0;
+  }
+
+  .login-btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 </style>
 

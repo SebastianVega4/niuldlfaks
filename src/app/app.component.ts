@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, RouterModule } from '@angular/router';
 import { SupabaseService } from './core/services/supabase.service';
@@ -12,6 +12,15 @@ import { SupabaseService } from './core/services/supabase.service';
 })
 export class AppComponent {
   supabase = inject(SupabaseService);
+  isMenuOpen = signal(false);
+
+  toggleMenu() {
+    this.isMenuOpen.update(val => !val);
+  }
+
+  closeMenu() {
+    this.isMenuOpen.set(false);
+  }
 
   logout() {
      this.supabase.signOut();

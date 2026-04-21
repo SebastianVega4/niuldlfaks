@@ -12,8 +12,7 @@ import { SupabaseService, Match } from '../core/services/supabase.service';
     <div class="container pb-8">
        <!-- Hero Banner -->
        <div class="glass-panel text-center" style="padding: 4rem 2rem; margin-bottom: 3rem; background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);">
-          <h1 class="title-glow" style="font-size: 3.5rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">Torneo Volley 2026</h1>
-          <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Sigue los marcadores en tiempo real, las estadísticas de tus equipos favoritos y descubre quién será el campeón.</p>
+          <h1 class="title-glow" style="font-size: 3.5rem; margin-bottom: 1rem; letter-spacing: 1px;">Torneo ASTROVOLLEY 2026-1</h1>          <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Sigue los marcadores en tiempo real, las estadísticas de tus equipos favoritos y descubre quién será el campeón.</p>
        </div>
 
        <!-- Seccion Partidos -->
