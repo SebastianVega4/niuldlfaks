@@ -2,7 +2,7 @@
   <div *ngIf="match() as m; else loading" class="animate-fade-in" style="margin-top: 2rem;">
     
     <!-- Top Header Broadcast Style -->
-    <div class="glass-panel text-center" style="padding: 2rem; margin-bottom: 2rem; border-top: 4px solid var(--accent-primary);">
+    <div class="glass-panel text-center scoreboard-panel">
       <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 1rem;">
         <span *ngIf="status() === 'live'" class="animate-pulse-glow" style="display: inline-block; background-color: #ef4444; color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;">● EN VIVO</span>
         <span *ngIf="status() === 'timeout'" style="display: inline-block; background-color: #f59e0b; color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: bold; font-size: 0.8rem; uppercase;">⏸ TIEMPO FUERA</span>
@@ -10,38 +10,36 @@
         <span *ngIf="status() === 'scheduled'" style="display: inline-block; background-color: #64748b; color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-weight: bold; font-size: 0.8rem;">PROGRAMADO</span>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div class="scoreboard-header">
         <!-- Team on Left -->
-        <div style="width: 33%; text-align: right;">
+        <div class="team-section left">
            <h2 [style.color]="teamOnLeft() === 'A' ? '#3b82f6' : '#f43f5e'"
-               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 10px rgba(59,130,246,0.3)' : '0 0 10px rgba(244,63,94,0.3)'"
-               style="font-size: 1.8rem; margin: 0;">
+               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 10px rgba(59,130,246,0.3)' : '0 0 10px rgba(244,63,94,0.3)'">
              {{ (teamOnLeft() === 'A' ? teamA()?.name : teamB()?.name) || '...' }}
            </h2>
-           <div style="font-size: 1.2rem; color: var(--text-secondary);">
+           <div class="sets-info">
              Sets Ganados: {{ teamOnLeft() === 'A' ? setsA() : setsB() }}
            </div>
         </div>
 
         <!-- Center Score -->
-        <div style="width: 33%; display: flex; justify-content: center; align-items: center; gap: 2rem; margin: 0 2rem;">
+        <div class="score-center">
            <div class="score-box" [class.score-a]="teamOnLeft() === 'A'" [class.score-b]="teamOnLeft() === 'B'">
              {{ teamOnLeft() === 'A' ? scoreA() : scoreB() }}
            </div>
-           <div style="font-size: 2rem; color: var(--text-secondary); font-weight: bold;">-</div>
+           <div class="score-divider">-</div>
            <div class="score-box" [class.score-a]="teamOnLeft() === 'B'" [class.score-b]="teamOnLeft() === 'A'">
              {{ teamOnLeft() === 'B' ? scoreA() : scoreB() }}
            </div>
         </div>
 
         <!-- Team on Right -->
-        <div style="width: 33%; text-align: left;">
+        <div class="team-section right">
            <h2 [style.color]="teamOnLeft() === 'A' ? '#f43f5e' : '#3b82f6'"
-               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 10px rgba(244,63,94,0.3)' : '0 0 10px rgba(59,130,246,0.3)'"
-               style="font-size: 1.8rem; margin: 0;">
+               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 10px rgba(244,63,94,0.3)' : '0 0 10px rgba(59,130,246,0.3)'">
              {{ (teamOnLeft() === 'A' ? teamB()?.name : teamA()?.name) || '...' }}
            </h2>
-           <div style="font-size: 1.2rem; color: var(--text-secondary);">
+           <div class="sets-info">
              Sets Ganados: {{ teamOnLeft() === 'A' ? setsB() : setsA() }}
            </div>
         </div>

@@ -1,8 +1,96 @@
+.scoreboard-panel {
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-top: 4px solid var(--accent-primary);
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.scoreboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
+.team-section {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  
+  &.left {
+    text-align: right;
+    align-items: flex-end;
+  }
+  
+  &.right {
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+    margin: 0;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .sets-info {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    text-align: center !important;
+    align-items: center !important;
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    .sets-info {
+      font-size: 1rem;
+    }
+  }
+}
+
+.score-center {
+  width: 33%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 0 1rem;
+
+  .score-divider {
+    font-size: 2rem;
+    color: var(--text-secondary);
+    font-weight: bold;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin: 0.5rem 0;
+    order: -1; /* Move scores above team names on mobile if desired, or keep them in between. The user says "números aparecen encima", maybe they want them better spaced. Let's try keeping them in order first but smaller. */
+    gap: 1rem;
+  }
+}
+
 .score-box {
   font-size: 5rem;
   font-weight: 800;
   line-height: 1;
-  min-width: 100px;
+  min-width: 80px;
   text-align: center;
   
   &.score-a {
@@ -13,6 +101,16 @@
   &.score-b {
     color: #f43f5e;
     text-shadow: 0 0 15px rgba(244, 63, 94, 0.5);
+  }
+
+  @media (max-width: 768px) {
+    font-size: 3.5rem;
+    min-width: 60px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2.8rem;
+    min-width: 50px;
   }
 }
 
