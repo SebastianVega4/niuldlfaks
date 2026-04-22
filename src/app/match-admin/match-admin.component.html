@@ -3,39 +3,52 @@
     
     <!-- Top Header -->
     <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
-      <!-- Team A Name -->
-      <h2 [class.title-glow]="serveState() === 'A'" style="margin: 0; font-size: 2rem; color: #3b82f6; width: 30%;">
-        {{ teamA()?.name || 'Equipo A' }}
-      </h2>
+      <!-- Team on Left -->
+      <div style="width: 30%;">
+        <h2 [class.title-glow]="serveState() === teamOnLeft()" 
+            [style.color]="teamOnLeft() === 'A' ? '#3b82f6' : '#f43f5e'"
+            style="margin: 0; font-size: 1.5rem; text-align: left;">
+          {{ (teamOnLeft() === 'A' ? teamA()?.name : teamB()?.name) || 'Equipo ' + teamOnLeft() }}
+        </h2>
+        <div style="font-size: 1rem; color: var(--text-secondary);">
+          Sets: {{ teamOnLeft() === 'A' ? setsA() : setsB() }}
+        </div>
+      </div>
       
       <!-- Central Score & Info -->
       <div class="text-center" style="width: 40%;">
-        <div *ngIf="m.scheduled_at" style="font-size: 0.9rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: bold;">
+        <div *ngIf="m.scheduled_at" style="font-size: 0.8rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
           📅 {{ m.scheduled_at | date:'short' }}
         </div>
-        <div style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px;">
+        <div style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">
           Set {{ setsA() + setsB() + 1 }}
         </div>
         <div style="display: flex; justify-content: center; align-items: center; gap: 2rem;">
-          <div style="font-size: 5rem; font-weight: 800; line-height: 1; text-shadow: var(--neon-glow);">
-            {{ scoreA() }}
+          <div [style.color]="teamOnLeft() === 'A' ? '#3b82f6' : '#f43f5e'"
+               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 20px rgba(59, 130, 246, 0.5)' : '0 0 20px rgba(244, 63, 94, 0.5)'"
+               style="font-size: 6rem; font-weight: 900; line-height: 1;">
+            {{ teamOnLeft() === 'A' ? scoreA() : scoreB() }}
           </div>
-          <div style="font-size: 2rem; color: var(--text-secondary);">:</div>
-          <div style="font-size: 5rem; font-weight: 800; line-height: 1; text-shadow: 0 0 10px rgba(244, 63, 94, 0.5), 0 0 20px rgba(244, 63, 94, 0.3);">
-            {{ scoreB() }}
+          <div style="font-size: 3rem; color: var(--text-secondary); font-weight: 200;">:</div>
+          <div [style.color]="teamOnLeft() === 'B' ? '#3b82f6' : '#f43f5e'"
+               [style.text-shadow]="teamOnLeft() === 'B' ? '0 0 20px rgba(59, 130, 246, 0.5)' : '0 0 20px rgba(244, 63, 94, 0.5)'"
+               style="font-size: 6rem; font-weight: 900; line-height: 1;">
+            {{ teamOnLeft() === 'B' ? scoreA() : scoreB() }}
           </div>
-        </div>
-        <div style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem; font-size: 1.5rem; font-weight: 600;">
-          <span style="color: #3b82f6;">Sets: {{ setsA() }}</span>
-          <span>-</span>
-          <span style="color: #f43f5e;">Sets: {{ setsB() }}</span>
         </div>
       </div>
 
-      <!-- Team B Name -->
-      <h2 [class.title-glow]="serveState() === 'B'" style="margin: 0; font-size: 2rem; color: #f43f5e; width: 30%; text-align: right;">
-        {{ teamB()?.name || 'Equipo B' }}
-      </h2>
+      <!-- Team on Right -->
+      <div style="width: 30%; text-align: right;">
+        <h2 [class.title-glow]="serveState() === (teamOnLeft() === 'A' ? 'B' : 'A')" 
+            [style.color]="teamOnLeft() === 'A' ? '#f43f5e' : '#3b82f6'"
+            style="margin: 0; font-size: 1.5rem;">
+          {{ (teamOnLeft() === 'A' ? teamB()?.name : teamA()?.name) || 'Equipo ' + (teamOnLeft() === 'A' ? 'B' : 'A') }}
+        </h2>
+        <div style="font-size: 1rem; color: var(--text-secondary);">
+          Sets: {{ teamOnLeft() === 'A' ? setsB() : setsA() }}
+        </div>
+      </div>
     </div>
 
     <!-- Edit/Settings Panel -->
@@ -134,6 +147,7 @@
         [teamB]="playersB()"
         [mode]="gameMode()"
         [sideSwapped]="sideSwapped()"
+        [(inverted)]="inverted"
         [isServeA]="serveState() === 'A'"
         [isServeB]="serveState() === 'B'">
     </app-court>

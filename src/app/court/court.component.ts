@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -134,7 +134,7 @@ export class CourtComponent {
 
   positionsTeamA = signal<string[]>([]);
   positionsTeamB = signal<string[]>([]);
-  inverted = signal(false);
+  inverted = model(false);
 
   toggleInversion() {
     this.inverted.update(v => !v);

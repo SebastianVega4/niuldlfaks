@@ -29,6 +29,9 @@ export class MatchAdminComponent {
   setsB = signal<number>(0);
   pointHistory = signal<any[]>([]);
   sideSwapped = signal<boolean>(false);
+  inverted = signal<boolean>(false);
+
+  teamOnLeft = computed(() => (this.sideSwapped() === this.inverted()) ? 'A' : 'B');
 
   // Playing state
   status = signal<'scheduled' | 'live' | 'timeout' | 'finished'>('scheduled');
@@ -352,7 +355,8 @@ export class MatchAdminComponent {
        game_time: this.timerValue(),
        rotation_state: {
           team_a: this.playersA(),
-          team_b: this.playersB()
+          team_b: this.playersB(),
+          side_swapped: this.sideSwapped()
        },
        point_history: this.pointHistory(),
        finished_at: this.status() === 'finished' ? new Date().toISOString() : null,

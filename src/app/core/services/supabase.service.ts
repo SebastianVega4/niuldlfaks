@@ -34,6 +34,7 @@ export interface Match {
   rotation_state: {
     team_a: string[];
     team_b: string[];
+    side_swapped?: boolean;
   };
   status: 'scheduled' | 'live' | 'timeout' | 'finished';
   game_mode?: number;

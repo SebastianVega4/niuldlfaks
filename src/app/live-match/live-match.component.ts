@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect, OnDestroy } from '@angular/core';
+import { Component, inject, signal, effect, OnDestroy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { SupabaseService, Match, Team } from '../core/services/supabase.service';
@@ -29,10 +29,15 @@ export class LiveMatchComponent implements OnDestroy {
 
   playersA = signal<string[]>([]);
   playersB = signal<string[]>([]);
-  
+
+  sideSwapped = signal<boolean>(false);
+  inverted = signal<boolean>(false);
+
+  teamOnLeft = computed(() => (this.sideSwapped() === this.inverted()) ? 'A' : 'B');
+
   status = signal<string>('scheduled');
   serveState = signal<'A' | 'B'>('A');
-  
+
   private realtimeSubscription: any = null;
 
   constructor() {
@@ -80,6 +85,7 @@ export class LiveMatchComponent implements OnDestroy {
 
     this.playersA.set(data.rotation_state?.team_a || []);
     this.playersB.set(data.rotation_state?.team_b || []);
+    this.sideSwapped.set(data.rotation_state?.side_swapped || false);
     
     this.status.set(data.status);
     

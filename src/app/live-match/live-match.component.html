@@ -11,40 +11,54 @@
       </div>
 
       <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-        <!-- Team A -->
+        <!-- Team on Left -->
         <div style="width: 33%; text-align: right;">
-           <h2 style="font-size: 3rem; margin: 0; color: #3b82f6; text-shadow: 0 0 10px rgba(59,130,246,0.3);">{{ teamA()?.name }}</h2>
-           <div style="font-size: 1.2rem; color: var(--text-secondary);">Sets Ganados: {{ setsA() }}</div>
+           <h2 [style.color]="teamOnLeft() === 'A' ? '#3b82f6' : '#f43f5e'"
+               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 10px rgba(59,130,246,0.3)' : '0 0 10px rgba(244,63,94,0.3)'"
+               style="font-size: 1.8rem; margin: 0;">
+             {{ (teamOnLeft() === 'A' ? teamA()?.name : teamB()?.name) || '...' }}
+           </h2>
+           <div style="font-size: 1.2rem; color: var(--text-secondary);">
+             Sets Ganados: {{ teamOnLeft() === 'A' ? setsA() : setsB() }}
+           </div>
         </div>
 
         <!-- Center Score -->
         <div style="width: 33%; display: flex; justify-content: center; align-items: center; gap: 2rem; margin: 0 2rem;">
-           <div class="score-box score-a">
-             {{ scoreA() }}
+           <div class="score-box" [class.score-a]="teamOnLeft() === 'A'" [class.score-b]="teamOnLeft() === 'B'">
+             {{ teamOnLeft() === 'A' ? scoreA() : scoreB() }}
            </div>
            <div style="font-size: 2rem; color: var(--text-secondary); font-weight: bold;">-</div>
-           <div class="score-box score-b">
-             {{ scoreB() }}
+           <div class="score-box" [class.score-a]="teamOnLeft() === 'B'" [class.score-b]="teamOnLeft() === 'A'">
+             {{ teamOnLeft() === 'B' ? scoreA() : scoreB() }}
            </div>
         </div>
 
-        <!-- Team B -->
+        <!-- Team on Right -->
         <div style="width: 33%; text-align: left;">
-           <h2 style="font-size: 3rem; margin: 0; color: #f43f5e; text-shadow: 0 0 10px rgba(244,63,94,0.3);">{{ teamB()?.name }}</h2>
-           <div style="font-size: 1.2rem; color: var(--text-secondary);">Sets Ganados: {{ setsB() }}</div>
+           <h2 [style.color]="teamOnLeft() === 'A' ? '#f43f5e' : '#3b82f6'"
+               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 10px rgba(244,63,94,0.3)' : '0 0 10px rgba(59,130,246,0.3)'"
+               style="font-size: 1.8rem; margin: 0;">
+             {{ (teamOnLeft() === 'A' ? teamB()?.name : teamA()?.name) || '...' }}
+           </h2>
+           <div style="font-size: 1.2rem; color: var(--text-secondary);">
+             Sets Ganados: {{ teamOnLeft() === 'A' ? setsB() : setsA() }}
+           </div>
         </div>
       </div>
     </div>
 
     <!-- The Court Graphic as Broadcast HUD -->
-    <div style="pointer-events: none;">
+    <div style="position: relative;">
        <app-court 
             [teamA]="playersA()" 
             [teamB]="playersB()"
             [mode]="match()?.game_mode || 6"
+            [sideSwapped]="sideSwapped()"
+            [(inverted)]="inverted"
             [isServeA]="serveState() === 'A'"
             [isServeB]="serveState() === 'B'"
-            [showInversionControl]="false">
+            [showInversionControl]="true">
        </app-court>
     </div>
 

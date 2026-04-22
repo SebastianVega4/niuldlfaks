@@ -19,6 +19,9 @@
 
       <!-- Enlaces Exclusivos del Admin -->
       <ng-container *ngIf="supabase.isAdmin()">
+
+
+        
          <div class="divider"></div>
          <a routerLink="/sorteo" (click)="closeMenu()" routerLinkActive="active-link" class="nav-link admin-link">Panel Sorteo</a>
          <button (click)="logout(); closeMenu()" class="nav-link logout-btn">Cerrar Sesión</button>
