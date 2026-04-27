@@ -1,3 +1,158 @@
+/* ── Header 3 columnas ── */
+.admin-header {
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-team {
+  width: 30%;
+
+  &--left { text-align: left; }
+  &--right { text-align: right; }
+}
+
+.admin-score-center {
+  width: 40%;
+}
+
+.admin-scores-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.admin-score-num {
+  font-size: 6rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.admin-score-sep {
+  font-size: 3rem;
+  color: var(--text-secondary);
+  font-weight: 200;
+}
+
+/* ── Controls ── */
+.admin-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-timer {
+  font-size: 2rem;
+  font-family: monospace;
+  font-weight: bold;
+  color: #fbbf24;
+  white-space: nowrap;
+}
+
+.admin-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.admin-sep {
+  width: 2px;
+  height: 36px;
+  background: var(--border-color);
+}
+
+/* ── Edit form grid ── */
+.admin-edit-grid {
+  margin-top: 1.5rem;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.admin-edit-full {
+  grid-column: span 2;
+}
+
+/* ── Rotation grid ── */
+.admin-rotation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .admin-team {
+    width: 100% !important;
+    text-align: center !important;
+
+    h2 { text-align: center !important; }
+  }
+
+  .admin-score-center {
+    width: 100% !important;
+    order: -1;
+  }
+
+  .admin-score-num {
+    font-size: 4.5rem;
+  }
+
+  .admin-score-sep {
+    font-size: 2rem;
+  }
+
+  .admin-scores-row {
+    gap: 1rem;
+  }
+
+  .admin-controls {
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem !important;
+  }
+
+  .admin-sep {
+    display: none;
+  }
+
+  .admin-btn-row {
+    gap: 0.6rem;
+
+    .btn { padding: 0.6rem 1rem; font-size: 1rem !important; }
+  }
+
+  .admin-edit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-edit-full {
+    grid-column: span 1;
+  }
+
+  .admin-rotation-grid {
+    grid-template-columns: 1fr;
+
+    > div { border-right: none !important; padding-right: 0 !important; padding-left: 0 !important; }
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-score-num { font-size: 3.5rem; }
+  .admin-timer { font-size: 1.5rem; }
+}
+
 .sets-horizontal-container {
   display: flex;
   flex-direction: column; // Los sets uno debajo de otro para tener ancho completo

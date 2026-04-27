@@ -6,6 +6,7 @@ import { MatchAdminComponent } from './match-admin/match-admin.component';
 import { LiveMatchComponent } from './live-match/live-match.component';
 import { StandingsComponent } from './standings/standings.component';
 import { TeamsComponent } from './teams/teams.component';
+import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'admin/:id', component: MatchAdminComponent, canActivate: [adminGuard] },
   { path: 'live/:id', component: LiveMatchComponent },
   { path: 'standings', component: StandingsComponent },
-  { path: 'teams', component: TeamsComponent }
+  { path: 'teams', component: TeamsComponent },
+  { path: 'leaderboard', component: LeaderboardComponent }
 ];

@@ -63,7 +63,12 @@ export class SupabaseService {
   liveMatches = signal<Match[]>([]);
 
   constructor() {
-    this.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    this.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        // Evita NavigatorLockAcquireTimeoutError cuando múltiples tabs/queries compiten por el lock de auth
+        lock: async (_name: string, _acquireTimeout: number, fn: () => Promise<any>) => fn()
+      }
+    });
     
     // Auth Listener
     this.supabase.auth.onAuthStateChange((event, session) => {

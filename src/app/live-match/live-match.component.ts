@@ -2,6 +2,7 @@ import { Component, inject, signal, effect, OnDestroy, computed } from '@angular
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { SupabaseService, Match, Team } from '../core/services/supabase.service';
+import { PredictionService } from '../core/services/prediction.service';
 import { CourtComponent } from '../court/court.component';
 
 @Component({
@@ -13,7 +14,9 @@ import { CourtComponent } from '../court/court.component';
 })
 export class LiveMatchComponent implements OnDestroy {
   private supabase = inject(SupabaseService);
+  private predSvc = inject(PredictionService);
   private route = inject(ActivatedRoute);
+  private matchLoaded = false;
 
   match = signal<Match | null>(null);
   
@@ -76,7 +79,8 @@ export class LiveMatchComponent implements OnDestroy {
   }
 
   applyUpdates(data: Match) {
-    // Only update to trigger animations or visual changes
+    const prevStatus = this.status();
+
     this.scoreA.set(data.current_set_score[0] || 0);
     this.scoreB.set(data.current_set_score[1] || 0);
     this.setsA.set(data.score_sets[0] || 0);
@@ -86,12 +90,18 @@ export class LiveMatchComponent implements OnDestroy {
     this.playersA.set(data.rotation_state?.team_a || []);
     this.playersB.set(data.rotation_state?.team_b || []);
     this.sideSwapped.set(data.rotation_state?.side_swapped || false);
-    
+
     this.status.set(data.status);
-    
+
     if (data.point_history && data.point_history.length > 0) {
       this.serveState.set(data.point_history[data.point_history.length - 1].team);
     }
+
+    if (this.matchLoaded && prevStatus !== 'finished' && data.status === 'finished' && data.id) {
+      this.predSvc.calculateAndSavePoints(data.id, data);
+    }
+
+    this.matchLoaded = true;
   }
 
   getTeamName(id: string | undefined): string {
