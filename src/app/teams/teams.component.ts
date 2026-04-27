@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Team, Player } from '../core/services/supabase.service';
@@ -66,19 +66,40 @@ import { SupabaseService, Team, Player } from '../core/services/supabase.service
     }
   `]
 })
-export class TeamsComponent implements OnInit {
+export class TeamsComponent implements OnInit, OnDestroy {
   supabase = inject(SupabaseService);
   loading = signal(true);
-  
+
   editingTeamId = signal<string | null>(null);
   newTeamName = '';
 
   teams = this.supabase.teams;
   players = this.supabase.players;
 
+  private realtimeChannel: any = null;
+
   async ngOnInit() {
     await this.supabase.fetchInitialData();
     this.loading.set(false);
+    this.setupRealtime();
+  }
+
+  ngOnDestroy() {
+    if (this.realtimeChannel) {
+      this.supabase.client.removeChannel(this.realtimeChannel);
+    }
+  }
+
+  private setupRealtime() {
+    this.realtimeChannel = this.supabase.client
+      .channel('teams_updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'teams' }, () => {
+        this.supabase.fetchInitialData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, () => {
+        this.supabase.fetchInitialData();
+      })
+      .subscribe();
   }
 
   getPlayersInTeam(teamId: string): Player[] {

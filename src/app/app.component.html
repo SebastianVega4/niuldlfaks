@@ -16,6 +16,7 @@
       <a routerLink="/" (click)="closeMenu()" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Inicio</a>
       <a routerLink="/standings" (click)="closeMenu()" routerLinkActive="active-link" class="nav-link">Posiciones</a>
       <a routerLink="/teams" (click)="closeMenu()" routerLinkActive="active-link" class="nav-link">Equipos</a>
+      <a routerLink="/leaderboard" (click)="closeMenu()" routerLinkActive="active-link" class="nav-link nav-link--ranking">🏆 Ranking</a>
 
       <!-- Enlaces Exclusivos del Admin -->
       <ng-container *ngIf="supabase.isAdmin()">
@@ -113,6 +114,14 @@
   color: #f43f5e !important;
 }
 
+.nav-link--ranking {
+  color: #fbbf24 !important;
+}
+.nav-link--ranking:hover, .nav-link--ranking.active-link {
+  background: rgba(251, 191, 36, 0.15) !important;
+  color: #fbbf24 !important;
+}
+
 .login-btn {
   padding: 0.5rem 1.2rem;
   font-size: 0.9rem;
@@ -141,8 +150,10 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
+    z-index: 999;
+    background: rgba(15, 23, 42, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     flex-direction: column;
     padding: 1.5rem;
     margin-top: 0.5rem;

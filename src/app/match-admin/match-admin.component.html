@@ -2,10 +2,10 @@
   <div *ngIf="match() as m; else loading" class="animate-fade-in">
     
     <!-- Top Header -->
-    <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+    <div class="glass-panel admin-header" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
       <!-- Team on Left -->
-      <div style="width: 30%;">
-        <h2 [class.title-glow]="serveState() === teamOnLeft()" 
+      <div class="admin-team admin-team--left">
+        <h2 [class.title-glow]="serveState() === teamOnLeft()"
             [style.color]="teamOnLeft() === 'A' ? '#3b82f6' : '#f43f5e'"
             style="margin: 0; font-size: 1.5rem; text-align: left;">
           {{ (teamOnLeft() === 'A' ? teamA()?.name : teamB()?.name) || 'Equipo ' + teamOnLeft() }}
@@ -14,33 +14,33 @@
           Sets: {{ teamOnLeft() === 'A' ? setsA() : setsB() }}
         </div>
       </div>
-      
+
       <!-- Central Score & Info -->
-      <div class="text-center" style="width: 40%;">
+      <div class="text-center admin-score-center">
         <div *ngIf="m.scheduled_at" style="font-size: 0.8rem; color: #fbbf24; margin-bottom: 0.5rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
           📅 {{ m.scheduled_at | date:'short' }}
         </div>
         <div style="font-size: 1rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">
           Set {{ setsA() + setsB() + 1 }}
         </div>
-        <div style="display: flex; justify-content: center; align-items: center; gap: 2rem;">
-          <div [style.color]="teamOnLeft() === 'A' ? '#3b82f6' : '#f43f5e'"
-               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 20px rgba(59, 130, 246, 0.5)' : '0 0 20px rgba(244, 63, 94, 0.5)'"
-               style="font-size: 6rem; font-weight: 900; line-height: 1;">
+        <div class="admin-scores-row">
+          <div class="admin-score-num"
+               [style.color]="teamOnLeft() === 'A' ? '#3b82f6' : '#f43f5e'"
+               [style.text-shadow]="teamOnLeft() === 'A' ? '0 0 20px rgba(59, 130, 246, 0.5)' : '0 0 20px rgba(244, 63, 94, 0.5)'">
             {{ teamOnLeft() === 'A' ? scoreA() : scoreB() }}
           </div>
-          <div style="font-size: 3rem; color: var(--text-secondary); font-weight: 200;">:</div>
-          <div [style.color]="teamOnLeft() === 'B' ? '#3b82f6' : '#f43f5e'"
-               [style.text-shadow]="teamOnLeft() === 'B' ? '0 0 20px rgba(59, 130, 246, 0.5)' : '0 0 20px rgba(244, 63, 94, 0.5)'"
-               style="font-size: 6rem; font-weight: 900; line-height: 1;">
+          <div class="admin-score-sep">:</div>
+          <div class="admin-score-num"
+               [style.color]="teamOnLeft() === 'B' ? '#3b82f6' : '#f43f5e'"
+               [style.text-shadow]="teamOnLeft() === 'B' ? '0 0 20px rgba(59, 130, 246, 0.5)' : '0 0 20px rgba(244, 63, 94, 0.5)'">
             {{ teamOnLeft() === 'B' ? scoreA() : scoreB() }}
           </div>
         </div>
       </div>
 
       <!-- Team on Right -->
-      <div style="width: 30%; text-align: right;">
-        <h2 [class.title-glow]="serveState() === (teamOnLeft() === 'A' ? 'B' : 'A')" 
+      <div class="admin-team admin-team--right">
+        <h2 [class.title-glow]="serveState() === (teamOnLeft() === 'A' ? 'B' : 'A')"
             [style.color]="teamOnLeft() === 'A' ? '#f43f5e' : '#3b82f6'"
             style="margin: 0; font-size: 1.5rem;">
           {{ (teamOnLeft() === 'A' ? teamB()?.name : teamA()?.name) || 'Equipo ' + (teamOnLeft() === 'A' ? 'B' : 'A') }}
@@ -57,7 +57,7 @@
         ⚙️ {{ editMode() ? 'Cerrar Edición' : 'Editar Información' }}
       </button>
 
-      <div *ngIf="editMode()" class="animate-fade-in" style="margin-top: 1.5rem; text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div *ngIf="editMode()" class="animate-fade-in admin-edit-grid">
          <div>
             <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Nombre Equipo A</label>
             <input type="text" [(ngModel)]="editNameA" class="input-field" style="width: 100%; padding: 0.5rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: white;">
@@ -66,27 +66,26 @@
             <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Nombre Equipo B</label>
             <input type="text" [(ngModel)]="editNameB" class="input-field" style="width: 100%; padding: 0.5rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: white;">
          </div>
-         <div style="grid-column: span 2;">
+         <div class="admin-edit-full">
             <label style="display: block; color: var(--text-secondary); margin-bottom: 0.5rem;">Fecha y Hora del Partido</label>
             <input type="datetime-local" [(ngModel)]="editDate" class="input-field" style="width: 100%; padding: 0.5rem; background: var(--bg-primary); border: 1px solid var(--border-color); color: white;">
          </div>
-         <div style="grid-column: span 2; text-align: center;">
+         <div class="admin-edit-full" style="text-align: center;">
             <button class="btn btn-primary" (click)="saveSettings()">Guardar Cambios</button>
          </div>
       </div>
     </div>
 
     <!-- Match Controls -->
-    <div class="glass-panel flex items-center justify-between" style="padding: 1rem 2rem; margin-bottom: 2rem;">
-      <div style="font-size: 2rem; font-family: monospace; font-weight: bold; color: #fbbf24;">
+    <div class="glass-panel admin-controls" style="padding: 1rem 2rem; margin-bottom: 2rem;">
+      <div class="admin-timer">
         ⏱️ {{ formattedTime }}
       </div>
-      
-      <div class="flex gap-4">
+      <div class="admin-btn-row">
          <button class="btn btn-secondary" (click)="removePoint('A')" [disabled]="status() !== 'live'" style="font-size: 1.2rem;">-1 🔵</button>
          <button class="btn btn-primary animate-pulse-glow" (click)="addPoint('A')" [disabled]="status() !== 'live'" style="font-size: 1.2rem;">+1 🔵</button>
-         
-         <div style="width: 2px; background: var(--border-color); margin: 0 1rem;"></div>
+
+         <div class="admin-sep"></div>
 
          <button *ngIf="status() !== 'live' && status() !== 'finished'" class="btn btn-primary" style="background-color: #10b981; font-size: 1.2rem;" (click)="startTimer()">
             ▶ Iniciar
@@ -95,7 +94,7 @@
             ⏸ Pausa
          </button>
 
-         <div style="width: 2px; background: var(--border-color); margin: 0 1rem;"></div>
+         <div class="admin-sep"></div>
 
          <button class="btn btn-danger animate-pulse-glow" (click)="addPoint('B')" [disabled]="status() !== 'live'" style="font-size: 1.2rem;">+1 🔴</button>
          <button class="btn btn-secondary" (click)="removePoint('B')" [disabled]="status() !== 'live'" style="font-size: 1.2rem;">-1 🔴</button>
@@ -107,7 +106,7 @@
       <h3 class="title-glow" style="font-size: 1.5rem; margin-bottom: 1rem;">
         Gestión de Rotación ({{ gameMode() }}x{{ gameMode() }})
       </h3>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+      <div class="admin-rotation-grid">
         <!-- Team A Rotations -->
         <div style="border-right: 1px solid var(--border-color); padding-right: 1rem;">
           <h4 style="color: #3b82f6;">{{ teamA()?.name }}</h4>
